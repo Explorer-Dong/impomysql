@@ -2,16 +2,16 @@
   "outputPath": "./output",
   "dbms": "mysql",
   "host": "127.0.0.1",
-  "port": 13306,
+  "port": 3308,
   "username": "root",
-  "password": "123456",
+  "password": "password",
   "dbPrefix": "TEST",
   "seed": 123456,
   "randGenPath": "./resources/go-randgen",
   "zzPath": "./resources/impo.zz.lua",
   "yyPath": "./resources/impo.yy",
-  "queriesNum": 100,
+  "queriesNum": 5000,
   "threadNum": 4,
-  "maxTasks": 16,
-  "maxTimeS": 60
+  "maxTasks": 1000,
+  "maxTimeS": 300
 }

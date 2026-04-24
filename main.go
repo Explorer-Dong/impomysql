@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/qaqcatz/impomysql/genmutpairs"
 	"github.com/qaqcatz/impomysql/task"
 	"github.com/qaqcatz/impomysql/tool/affversion"
 	"github.com/qaqcatz/impomysql/tool/ckstable"
@@ -9,6 +10,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 // todo: use urfave/cli
@@ -23,6 +25,7 @@ import (
 // or  affdbdeployer dbdeployerPath dbJsonPath taskPoolConfigPath threadNum port newestImage oldestImage
 // or  affclassify dbDeployerPath dbJsonPath taskPoolConfigPath
 // or  sqlsimx "dml" | "ddl" inputDMLPath inputDDLPath outputPath host post username password dbname [dmlfunc]
+// or  genmutpairs host port username password dbname count outputPath [seed]
 func main() {
 	args := os.Args
 	if len(args) <= 1 {
@@ -45,8 +48,10 @@ func main() {
 		doAffClassify(args)
 	case "sqlsimx":
 		doSqlSimX(args)
+	case "genmutpairs":
+		doGenMutPairs(args)
 	default:
-		log.Fatal("[main]please use task, taskpool, ckstable, sqlsim, affversion, affdbdeployer, affclassify, sqlsimx")
+		log.Fatal("[main]please use task, taskpool, ckstable, sqlsim, affversion, affdbdeployer, affclassify, sqlsimx, genmutpairs")
 	}
 }
 
@@ -286,4 +291,39 @@ func doSqlSimX(args []string) {
 		dmlFunc = args[11]
 	}
 	sqlsimx.SqlSimX(opt, inputDMLPath, inputDDLPath, outputPath, host, post, username, password, dbname, dmlFunc)
+}
+
+func doGenMutPairs(args []string) {
+	start := time.Now()
+	defer func() {
+		log.Printf("doGenMutPairs execution time: %v", time.Since(start))
+	}()
+	// genmutpairs host port username password dbname count outputPath [seed]
+	if len(args) <= 8 {
+		log.Fatal("[doGenMutPairs]usage: genmutpairs host port username password dbname count outputPath [seed]")
+	}
+	host := args[2]
+	port, err := strconv.Atoi(args[3])
+	if err != nil || port <= 0 {
+		log.Fatal("[doGenMutPairs]parse port error")
+	}
+	username := args[4]
+	password := args[5]
+	dbname := args[6]
+	count, err := strconv.Atoi(args[7])
+	if err != nil || count <= 0 {
+		log.Fatal("[doGenMutPairs]parse count error")
+	}
+	outputPath := args[8]
+	var seed int64 = 42
+	if len(args) > 9 {
+		seed, err = strconv.ParseInt(args[9], 10, 64)
+		if err != nil {
+			log.Fatal("[doGenMutPairs]parse seed error: ", err)
+		}
+	}
+	err = genmutpairs.Run(host, port, username, password, dbname, count, outputPath, seed)
+	if err != nil {
+		log.Fatal("[doGenMutPairs]error: ", err)
+	}
 }

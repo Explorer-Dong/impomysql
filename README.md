@@ -675,3 +675,17 @@ You can only provide one sql statement in `inputDMLPath`!
 * If you use `ddl`, we will remove unused tables, columns (only consider `CREATE TABLE` and `INSERT INTO VALUES`, may error).
 
 Then write the simplified sql to `outputPath`.
+
+### 4.6 genmutpairs
+
+If you want to extract mutation SQL pairs during testing, run:
+
+```bash
+./impomysql genmutpairs <ip> <port> <user> <password> <db_name> <pair_count> <jsonl_filepath> <seed>
+```
+
+For example:
+
+```bash
+./impomysql genmutpairs 127.0.0.1 3308 root password TEST_DB 100 output/molt.jsonl 42
+```

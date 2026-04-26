@@ -16,11 +16,11 @@ import (
 
 // MutationPair represents a single (DDL, origin SQL, mutated SQL) triple.
 type MutationPair struct {
-	ID           int    `json:"id"`
-	MutationName string `json:"mutation_name"`
+	ID           int    `json:"idx"`
 	DDL          string `json:"ddl"`
 	OriginSQL    string `json:"origin_sql"`
-	MutatedSQL   string `json:"mutated_sql"`
+	MutatedSQL   string `json:"mutate_sql"`
+	MutationName string `json:"mutate_name"`
 }
 
 // MutationPairResult is the top-level output: mutation_name -> list of pairs (no wrapper).

@@ -508,6 +508,14 @@ func stripCharsetIntroducer(sql string) string {
 	})
 }
 
+func ensureTrailingSemicolon(sql string) string {
+    sql = strings.TrimSpace(sql)
+    if sql == "" || sql[len(sql)-1] == ';' {
+        return sql
+    }
+    return sql + ";"
+}
+
 // GenerateMutationPairs generates mutation pairs for all 18 methods.
 func GenerateMutationPairs(config *GenConfig) (MutationPairResult, error) {
 	// Create DB connector
@@ -624,8 +632,8 @@ func GenerateMutationPairs(config *GenConfig) (MutationPairResult, error) {
 					ID:           globalID,
 					MutationName: mutName,
 					DDL:          tmpl.FullDDLStr,
-					OriginSQL:    originSQL,
-					MutatedSQL:   mutatedSQL,
+					OriginSQL:    ensureTrailingSemicolon(originSQL),
+					MutatedSQL:   ensureTrailingSemicolon(mutatedSQL),
 				}
 				globalID++
 				result[mutName] = append(result[mutName], pair)
